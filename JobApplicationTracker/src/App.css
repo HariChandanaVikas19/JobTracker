@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Fonts used by the landing page (loaded in index.html) */
+@theme {
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Figtree", ui-sans-serif, system-ui, sans-serif;
+}
