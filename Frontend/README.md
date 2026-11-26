@@ -20,6 +20,7 @@ The frontend for Simple Job Application Tracker. It provides the user interface 
 - React Router 7
 - Axios
 - Tailwind CSS 4
+- Redux Toolkit
 
 ## Setup
 

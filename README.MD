@@ -20,6 +20,7 @@ A full-stack web application that helps users organize and monitor their job app
 - React Router
 - Axios
 - Tailwind CSS 4
+- Redux Toolkit
 
 **Backend**
 - Node.js
