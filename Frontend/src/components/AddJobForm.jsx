@@ -18,6 +18,7 @@ const initialForm = {
 };
 
 const TOKEN_KEY = "userToken"; 
+
 const inputClass =
   "w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 " +
   "placeholder-gray-400 shadow-sm transition focus:border-cyan-600 focus:outline-none " +
@@ -52,9 +53,10 @@ const AddJobForm = () => {
 
   const handleSkillKeyDown = (e) => {
     if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault(); 
+      e.preventDefault(); // stop Enter from submitting the form
       addSkill();
     } else if (e.key === "Backspace" && !skillInput && skills.length > 0) {
+      // backspace on empty input removes the last skill
       setSkills((prev) => prev.slice(0, -1));
     }
   };
@@ -62,6 +64,8 @@ const AddJobForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    // include a skill that was typed but not yet added with Enter
     const pending = skillInput.trim();
     const finalSkills =
       pending && !skills.some((s) => s.toLowerCase() === pending.toLowerCase())
@@ -82,20 +86,16 @@ const AddJobForm = () => {
       setForm(initialForm);
       setSkills([]);
       setSkillInput("");
-      navigate("/"); 
+      navigate("/jobs"); // back to the jobs list
     } catch (err) {
-      if (err.response?.status === 401) {
-        localStorage.removeItem(TOKEN_KEY);
-        navigate("/login", { replace: true });
-      }
-      setError(err.response?.data?.message || err.response?.data?.error || "Could not save the job");
+      setError(err.response?.data?.message || "Could not save the job");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-3 py-6 sm:px-6 sm:py-10 lg:px-8">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-3 py-6 sm:px-6 sm:py-10 lg:px-8">
       <div className="w-full max-w-md rounded-2xl bg-gray-100 p-2 sm:max-w-xl sm:rounded-3xl sm:p-4 md:max-w-2xl lg:max-w-3xl">
         <form
           onSubmit={handleSubmit}

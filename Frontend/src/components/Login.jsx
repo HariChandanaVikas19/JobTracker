@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import BaseURL from "../Axios/AxiosInstance";
+import { useAuth } from "../context/useAuth";
+import { getToken } from "../utils/getToken";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -23,19 +26,10 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await BaseURL.post("/api/users/login", userData);
-      const responseData = res.data;
-      const token = typeof responseData === "string"
-        ? responseData
-        : responseData?.token || responseData?.accessToken || responseData?.data?.token;
-
-      if (!token) {
-        throw new Error("Login succeeded, but the server did not return an authentication token.");
-      }
-
-      localStorage.setItem("userToken", token);
-      navigate("/", { replace: true });
+      login(getToken(res.data));
+      navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Unable to log in. Please try again.");
+      setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -45,10 +39,10 @@ const Login = () => {
     "w-full rounded-lg border border-gray-300 px-3 py-1.5 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200";
 
   return (
-    <div className="flex px-4 py-8 ml-[500px] w-[400px]">
+    <div className="flex justify-center px-4 py-8">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm h-[400px]"
+        className="w-full min-h-96 max-w-md space-y-4 rounded-2xl border border-gray-200 bg-white p-6"
       >
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Login account</h1>

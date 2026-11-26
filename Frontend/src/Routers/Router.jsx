@@ -1,36 +1,35 @@
-import { createBrowserRouter } from "react-router-dom";
-import Home from "../components/Home";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import AppLayout from "../components/AppLayout";
+import Landing from "../components/Landing";
+import Jobs from "../components/Jobs";
 import Profile from "../components/Profile";
-import NavbarLayout from "../components/NavbarLayout";
 import AddJobForm from "../components/AddJobForm";
 import Signup from "../components/Signup";
 import Login from "../components/Login";
+import { RequireAuth, PublicOnly } from "./Guards";
 
 export const jobApplicationRouter = createBrowserRouter([
   {
-    path: "/",
-    element: <NavbarLayout />,
+    element: <AppLayout />,
     children: [
-      { 
-        index: true,
-        element: <Home /> 
-      },
-      { 
-        path: "profile",
-        element: <Profile />
-       },
-      { 
-        path: "add-job-form", 
-        element: <AddJobForm /> 
+      { path: "/", element: <Landing /> },
+      {
+        element: <RequireAuth />,
+        children: [
+          { path: "/jobs", element: <Jobs /> },
+          { path: "/profile", element: <Profile /> },
+          { path: "/add-job-form", element: <AddJobForm /> },
+        ],
       },
       {
-         path: "signup",
-         element: <Signup />
+        element: <PublicOnly />,
+        children: [
+          { path: "/login", element: <Login /> },
+          { path: "/signup", element: <Signup /> },
+        ],
       },
-      { 
-        path: "login",
-        element: <Login />
-       },
+
+      { path: "*", element: <Navigate to="/" replace /> },
     ],
   },
 ]);

@@ -1,57 +1,16 @@
-# JobTracker Frontend
+# React + Vite
 
-React + Vite frontend for the Job Application Tracker.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Requirements
+Currently, two official plugins are available:
 
-- Node.js 20.19+ (or a compatible newer LTS release)
-- npm
-- The JobTracker backend running separately
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Setup
+## React Compiler
 
-1. Open this folder in VS Code or a terminal.
-2. Install dependencies:
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-   ```bash
-   npm install
-   ```
+## Expanding the ESLint configuration
 
-3. Create a `.env` file in this folder (same level as `package.json`) and add:
-
-   ```env
-   VITE_API_URL=api_url
-   ```
-
-   Change the port to match the port used by your backend. Do not add `/api` to the end because the frontend requests already include `/api`.
-
-4. Start the frontend:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open the local URL printed by Vite, usually `http://localhost:5173`.
-
-## Other commands
-
-```bash
-
-npm run build
-npm run lint
-npm run preview
-```
-
-## Backend API expected by this frontend
-
-- `POST /api/users/register` — create an account
-- `POST /api/users/login` — login; return a JWT string or an object containing `token`, `accessToken`, or `data.token`
-- `GET /api/users/current` — return the logged-in user (directly or inside `user` / `data`)
-- `GET /api/jobs` — return an array of jobs or an object containing `jobs`
-- `POST /api/jobs` — create a job
-- `PUT /api/jobs/:id` — update a job (the status update sends `{ "status": "Applied" }`)
-- `DELETE /api/jobs/:id` — delete a job
-
-Protected endpoints should accept the JWT in the `Authorization: Bearer <token>` header. The Axios instance adds this header automatically whenever a token exists in local storage.
-
-If your backend uses different endpoint paths, status values, or response shapes, update the corresponding frontend request to match the backend contract.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

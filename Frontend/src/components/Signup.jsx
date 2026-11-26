@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import BaseURL from "../Axios/AxiosInstance";
+import { useAuth } from "../context/useAuth";
+import { getToken } from "../utils/getToken";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -23,9 +26,17 @@ const Signup = () => {
     setError("");
     setLoading(true);
     try {
-      const res = await BaseURL.post("/api/users/register", userData);
-      console.log(res.data);
-      navigate("/login");
+      await BaseURL.post("/api/users/register", userData);
+      try {
+        const res = await BaseURL.post("/api/users/login", {
+          email: userData.email,
+          password: userData.password,
+        });
+        login(getToken(res.data));
+        navigate("/profile");
+      } catch {
+        navigate("/login");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
@@ -37,10 +48,10 @@ const Signup = () => {
     "w-full rounded-lg border border-gray-300 px-3 py-1.5 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200";
 
   return (
-    <div className="flex justify-center px-4 py-8 ml-[500px] w-[400px]">
+    <div className="flex justify-center px-4 py-8">
       <form
         onSubmit={handleSubmit}
-        className="w-full h-[450px] max-w-md space-y-4 rounded-2xl border border-gray-200 bg-white p-6"
+        className="w-full min-h-96 max-w-md space-y-4 rounded-2xl border border-gray-200 bg-white p-6"
       >
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Create account</h1>

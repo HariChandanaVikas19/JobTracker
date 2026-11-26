@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 export default function Logo() {
   return (
     <Link to="/" className="flex items-center gap-2.5">
-      {/* Icon badge */}
       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-700 to-cyan-600 shadow-md shadow-blue-700/25">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -21,8 +20,6 @@ export default function Logo() {
           <path d="m9 14 2 2 4-4" />
         </svg>
       </span>
-
-      {/* Gradient wordmark */}
       <span className="bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-2xl font-extrabold tracking-tight text-transparent">
         JobTracker
       </span>
