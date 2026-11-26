@@ -53,10 +53,9 @@ const AddJobForm = () => {
 
   const handleSkillKeyDown = (e) => {
     if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault(); // stop Enter from submitting the form
+      e.preventDefault(); 
       addSkill();
     } else if (e.key === "Backspace" && !skillInput && skills.length > 0) {
-      // backspace on empty input removes the last skill
       setSkills((prev) => prev.slice(0, -1));
     }
   };
@@ -64,8 +63,6 @@ const AddJobForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    // include a skill that was typed but not yet added with Enter
     const pending = skillInput.trim();
     const finalSkills =
       pending && !skills.some((s) => s.toLowerCase() === pending.toLowerCase())
@@ -86,7 +83,7 @@ const AddJobForm = () => {
       setForm(initialForm);
       setSkills([]);
       setSkillInput("");
-      navigate("/jobs"); // back to the jobs list
+      navigate("/jobs");
     } catch (err) {
       setError(err.response?.data?.message || "Could not save the job");
     } finally {

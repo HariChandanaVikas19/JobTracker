@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import Logo from "./Logo";
-import { useAuth } from "../context/useAuth";
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "../features/auth/authSlice";
 
 const linkBase =
   "rounded-lg px-3 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400";
@@ -17,7 +18,7 @@ const sectionLinkClass = `${linkBase} text-slate-600 hover:bg-blue-50 hover:text
 const signupClass = `${linkBase} bg-blue-700 px-4 text-white hover:bg-blue-800`;
 
 const SiteNavbar = () => {
-  const { isLoggedIn } = useAuth();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);

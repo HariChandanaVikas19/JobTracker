@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import BaseURL from "../Axios/AxiosInstance";
-import { useAuth } from "../context/useAuth";
+import { useDispatch } from "react-redux";
+import { login } from "../features/auth/authSlice";
 import { getToken } from "../utils/getToken";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -32,7 +33,7 @@ const Signup = () => {
           email: userData.email,
           password: userData.password,
         });
-        login(getToken(res.data));
+        dispatch(login(getToken(res.data)));
         navigate("/profile");
       } catch {
         navigate("/login");

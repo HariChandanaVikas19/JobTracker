@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseURL from "../Axios/AxiosInstance";
-import { useAuth } from "../context/useAuth";
+import { useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 const TOKEN_KEY = "userToken"; 
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const dispatch = useDispatch();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -22,16 +23,16 @@ const Profile = () => {
         setUser(res.data);
       } catch (err) {
         if (err.response?.status === 401) {
-          logout();
+          dispatch(logout());
           navigate("/login");
         }
       }
     };
     fetchProfile();
-  }, [navigate, logout]);
+  }, [navigate, dispatch]);
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
   };
 
   if (!user) {

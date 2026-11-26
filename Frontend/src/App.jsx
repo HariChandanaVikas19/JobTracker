@@ -1,12 +1,13 @@
 import { RouterProvider } from "react-router-dom";
+import { Provider } from "react-redux";
 import { jobApplicationRouter } from "./Routers/Router";
-import { AuthProvider } from "./context/AuthProvider";
+import { store } from "./app/store";
 
 const App = () => {
   return (
-    <AuthProvider>
+    <Provider store={store}>
       <RouterProvider router={jobApplicationRouter} />
-    </AuthProvider>
+    </Provider>
   );
 };
 

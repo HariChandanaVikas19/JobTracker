@@ -3,10 +3,11 @@ import Features from "./landing/Features";
 import HowItWorks from "./landing/HowItWorks";
 import CallToAction from "./landing/CallToAction";
 import Footer from "./landing/Footer";
-import { useAuth } from "../context/useAuth";
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "../features/auth/authSlice";
 
 const Landing = () => {
-  const { isLoggedIn } = useAuth();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
   return (
     <>

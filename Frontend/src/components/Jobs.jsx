@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BaseURL from "../Axios/AxiosInstance";
-import { useAuth } from "../context/useAuth";
+import { useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 const STATUS_STYLES = {
   Applied: "bg-cyan-100 text-cyan-800",
@@ -19,7 +20,7 @@ const STATUS_LABELS = {
 
 const Jobs = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const dispatch = useDispatch();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -37,7 +38,7 @@ const Jobs = () => {
         setJobs(Array.isArray(res.data) ? res.data : res.data.jobs ?? []);
       } catch (err) {
         if (err.response?.status === 401) {
-          logout();
+          dispatch(logout());
           navigate("/login");
         } else {
           setError(err.response?.data?.message || "Could not load jobs");
@@ -47,7 +48,7 @@ const Jobs = () => {
       }
     };
     fetchJobs();
-  }, [navigate, logout]);
+  }, [navigate, dispatch]);
 
   const removeJob = async (id) => {
     try {

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import BaseURL from "../Axios/AxiosInstance";
-import { useAuth } from "../context/useAuth";
+import { useDispatch } from "react-redux";
+import { login } from "../features/auth/authSlice";
 import { getToken } from "../utils/getToken";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -26,7 +27,7 @@ const Login = () => {
     setLoading(true);
     try {
       const res = await BaseURL.post("/api/users/login", userData);
-      login(getToken(res.data));
+      dispatch(login(getToken(res.data)));
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
