@@ -11,18 +11,21 @@ A full-stack web application that helps users organize and monitor their job app
 - Update an application's status.
 - Delete an application.
 - Keep each user's job records private through authenticated, user-scoped API operations.
+- Manage authentication state globally with Redux Toolkit.
 
 ## Tech Stack
 
 **Frontend**
+
 - React 19
 - Vite
 - React Router
+- Redux Toolkit + React Redux
 - Axios
 - Tailwind CSS 4
-- Redux Toolkit
 
 **Backend**
+
 - Node.js
 - Express 5
 - MongoDB
@@ -38,10 +41,11 @@ SimpleJobApplicationTracker/
 ├── frontend/
 │   ├── public/
 │   ├── src/
+│   │   ├── app/             # Redux store
+│   │   ├── features/auth/   # Auth slice (Redux Toolkit)
 │   │   ├── Axios/
 │   │   ├── Routers/
 │   │   ├── components/
-│   │   ├── context/
 │   │   ├── utils/
 │   │   ├── App.jsx
 │   │   └── main.jsx
@@ -127,20 +131,31 @@ Open the local URL printed by Vite (normally `http://localhost:5173`).
 
 > The frontend Axios instance uses `VITE_API_URL` as its base URL. The backend CORS configuration currently allows `http://localhost:5173`.
 
+## Frontend State Management
+
+The frontend uses **Redux Toolkit** for authentication state.
+
+- `frontend/src/app/store.js` creates the store with `configureStore`, and `App.jsx` wraps the app in `<Provider store={store}>`.
+- `frontend/src/features/auth/authSlice.js` holds the JWT (`auth.token`), the `login` and `logout` thunks, and the `selectIsLoggedIn` selector.
+- The token is also saved in `localStorage` under `userToken`, so users stay logged in after a page refresh. The Axios interceptor reads the same key to add the `Authorization: Bearer <JWT>` header.
+- Route guards use `useSelector(selectIsLoggedIn)` to protect private pages and to keep logged-in users away from `/login` and `/signup`.
+
+See `frontend/README.md` for usage examples.
+
 ## API Overview
 
 All routes are mounted on the backend at `/api`.
 
-| Method | Endpoint | Purpose | Authentication |
-|---|---|---|---|
-| POST | `/api/users/register` | Register a user | No |
-| POST | `/api/users/login` | Log in and receive a JWT | No |
-| GET | `/api/users/current` | Get the logged-in user's profile | Bearer token |
-| GET | `/api/jobs` | List the logged-in user's jobs | Bearer token |
-| POST | `/api/jobs` | Create a job application | Bearer token |
-| GET | `/api/jobs/:id` | Get one owned job application | Bearer token |
-| PUT | `/api/jobs/:id` | Update an owned job application | Bearer token |
-| DELETE | `/api/jobs/:id` | Delete an owned job application | Bearer token |
+| Method | Endpoint              | Purpose                          | Authentication |
+| ------ | --------------------- | -------------------------------- | -------------- |
+| POST   | `/api/users/register` | Register a user                  | No             |
+| POST   | `/api/users/login`    | Log in and receive a JWT         | No             |
+| GET    | `/api/users/current`  | Get the logged-in user's profile | Bearer token   |
+| GET    | `/api/jobs`           | List the logged-in user's jobs   | Bearer token   |
+| POST   | `/api/jobs`           | Create a job application         | Bearer token   |
+| GET    | `/api/jobs/:id`       | Get one owned job application    | Bearer token   |
+| PUT    | `/api/jobs/:id`       | Update an owned job application  | Bearer token   |
+| DELETE | `/api/jobs/:id`       | Delete an owned job application  | Bearer token   |
 
 ### Job application fields
 
@@ -154,12 +169,14 @@ All routes are mounted on the backend at `/api`.
 ## Available Scripts
 
 **Frontend** (`cd frontend`):
+
 - `npm run dev` — start the Vite development server.
 - `npm run build` — create a production build in `dist`.
 - `npm run preview` — preview the production build locally.
 - `npm run lint` — run ESLint.
 
 **Backend** (`cd Backend`):
+
 - `npm run dev` — start the API with Nodemon.
 - `npm start` — start the API with Node.js.
 

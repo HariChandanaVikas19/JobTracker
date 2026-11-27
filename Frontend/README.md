@@ -11,16 +11,17 @@ The frontend for Simple Job Application Tracker. It provides the user interface 
 - List job applications belonging to the logged-in user.
 - Add job applications with company, role, location, package, skills, and status.
 - Edit an application's status and delete an application.
-- JWT is stored in browser `localStorage` and attached to API requests through an Axios request interceptor.
+- Global authentication state managed with **Redux Toolkit**.
+- JWT is stored in browser `localStorage` (so users stay logged in after a refresh) and attached to API requests through an Axios request interceptor.
 
 ## Tech Stack
 
 - React 19
 - Vite
 - React Router 7
+- Redux Toolkit + React Redux
 - Axios
 - Tailwind CSS 4
-- Redux Toolkit
 
 ## Setup
 
@@ -36,6 +37,8 @@ From the `frontend` directory:
 ```bash
 npm install
 ```
+
+This also installs `@reduxjs/toolkit` and `react-redux`, which are listed in `package.json`.
 
 ### Configure the API URL
 
@@ -70,6 +73,11 @@ npm run lint      # Run ESLint
 
 ```text
 src/
+├── app/
+│   └── store.js                # Redux store (configureStore)
+├── features/
+│   └── auth/
+│       └── authSlice.js        # Auth state, login/logout thunks, selectors
 ├── Axios/
 │   └── AxiosInstance.jsx       # Axios base URL and JWT interceptor
 ├── Routers/
@@ -83,15 +91,50 @@ src/
 │   ├── Signup.jsx
 │   ├── Profile.jsx
 │   └── ...
-├── context/
-│   ├── AuthContext.js
-│   ├── AuthProvider.jsx        # Authentication state
-│   └── useAuth.js
 ├── utils/
 │   └── getToken.js
-├── App.jsx
+├── App.jsx                     # Wraps the router in <Provider store={store}>
 └── main.jsx
 ```
+
+## State Management (Redux Toolkit)
+
+Authentication state lives in a single Redux slice, `src/features/auth/authSlice.js`.
+
+| Part     | Name               | Purpose                                                                                      |
+| -------- | ------------------ | -------------------------------------------------------------------------------------------- |
+| State    | `auth.token`       | The JWT, or `null` when logged out. Read from `localStorage` once when the store is created. |
+| Thunk    | `login(token)`     | Saves the token to `localStorage` and stores it in Redux.                                    |
+| Thunk    | `logout()`         | Removes the token from `localStorage` and clears it in Redux.                                |
+| Selector | `selectToken`      | Returns the current token.                                                                   |
+| Selector | `selectIsLoggedIn` | Returns `true` when a token exists. Derived, never stored separately.                        |
+
+Reducers stay pure: writing to `localStorage` happens in the thunks, not in the reducers.
+
+**Reading auth state in a component:**
+
+```jsx
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "../features/auth/authSlice";
+
+const isLoggedIn = useSelector(selectIsLoggedIn);
+```
+
+**Logging in or out:**
+
+```jsx
+import { useDispatch } from "react-redux";
+import { login, logout } from "../features/auth/authSlice";
+
+const dispatch = useDispatch();
+dispatch(login(token)); // after a successful login/signup request
+dispatch(logout()); // on logout or a 401 response
+```
+
+**Route guards** (`Routers/Guards.jsx`):
+
+- `RequireAuth` shows protected pages only when `selectIsLoggedIn` is `true`; otherwise it redirects to `/login`.
+- `PublicOnly` shows `/login` and `/signup` only to logged-out users. A logged-in user is redirected to `/profile` from `/signup`, or to `/` from other public pages.
 
 ## Backend API Integration
 
@@ -113,6 +156,8 @@ Authenticated requests include:
 ```http
 Authorization: Bearer <JWT>
 ```
+
+The Axios interceptor reads the token from `localStorage` under the key `userToken`, which is the same key the auth slice writes to.
 
 ## Important
 
